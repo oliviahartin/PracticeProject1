@@ -13,24 +13,28 @@ SET human_development_index = NULLIF(human_development_index, ' ');
 
 --Looking at total cases vs. total deaths
 --Shows likelihood of dying from covid infection in your country
+
 SELECT location, date, total_cases, total_deaths, (total_deaths/total_cases) * 100 AS DeathPercentage
 FROM PortfolioProject1..CovidDeaths
 WHERE location LIKE '%states%'
 ORDER BY 1,2
 
 -- Looking at total_cases vs. population
--- What percentage of population was infected with Covid 
+-- What percentage of population was infected with Covid
+	
 SELECT location, date, population, total_cases, (total_cases/population) * 100 AS InfectedPopPercent
 FROM PortfolioProject1..CovidDeaths
 ORDER BY 1,2
 
 -- Looking at countries with highest infection rate compared to population
+	
 SELECT location, population, MAX(total_cases) AS HighestInfectionCount, MAX((total_cases / population)) * 100 AS InfectedPopPercent
 FROM PortfolioProject1..CovidDeaths
 GROUP BY location, population
 ORDER BY InfectedPopPercent desc
 
 -- Showing Countries w/ Highest Death Count per Population
+	
 SELECT location, MAX(total_deaths) AS TotalDeathCount
 FROM PortfolioProject1..CovidDeaths
 WHERE continent is not null
@@ -39,13 +43,15 @@ ORDER BY TotalDeathCount desc
 
 
 -- Break things down by continent!
+	
 SELECT location, MAX(total_deaths) AS TotalDeathCount
 FROM PortfolioProject1..CovidDeaths
 WHERE continent is not null
 GROUP BY location
 ORDER BY TotalDeathCount desc
 
---Showing continents w/ highest death count per population 
+--Showing continents w/ highest death count per population
+	
 SELECT continent, total_deaths, population, (total_deaths / population) AS DeathCountPerPop
 FROM PortfolioProject1..CovidDeaths
 
@@ -94,6 +100,7 @@ SELECT *, (VaccinationRT / Population) * 100
 FROM PopvsVac;
 
 -- USE TEMP TABLE
+
 DROP table if exists #PercentPopVaccinated
 CREATE TABLE #PercentPopVaccinated
 (
@@ -113,12 +120,12 @@ FROM PortfolioProject1..CovidDeaths dea
 JOIN PortfolioProject1..CovidVaccinations vac
 	ON dea.location = vac.location
 	AND dea.date = vac.date
---WHERE dea.continent is not null
+----WHERE dea.continent is not null
 
 SELECT *, (VaccinationRT / Population) * 100
 FROM #PercentPopVaccinated;
 
--- Creating VIew to store data for later visualiations
+-- Creating View to store data for later visualiations
 
 CREATE VIEW PercentPopVaccinated AS
 SELECT  dea.continent, dea.location, dea.date, dea.population, vac.new_vaccinations
